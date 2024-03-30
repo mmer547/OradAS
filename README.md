@@ -21,6 +21,10 @@ OradAS is written in Japanese so that even people who are not good at English ca
 
 For more information about features under development in OradAS, please see the issue.
 
+## バージョン履歴/Version up log
+
+2024/03/30 : Version 1.0 release
+
 ## 起動要件/requirement
 
 Python (>=3.10)
