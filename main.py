@@ -6,15 +6,19 @@ import subprocess as sp
 
 from install_tab import *
 
+import json
+
 def dirdialog_clicked(IDirEntry):
     iDir = os.path.abspath(os.path.dirname(__file__))
     iDirPath = filedialog.askdirectory(initialdir = iDir)
+    IDirEntry.delete(0, "end")
     IDirEntry.insert(tk.END, iDirPath)
     return
 
 def filedialog_clicked(IFileEntry):
-    iFile = os.path.abspath(os.path.dirname(__file__))
-    iFilePath = filedialog.askopenfile(initialdir = iFile)
+    iFile = os.path.abspath(os.path.dirname(IFileEntry.get()))
+    iFilePath = filedialog.askopenfilename(initialdir = iFile)
+    IFileEntry.delete(0, "end")
     IFileEntry.insert(tk.END, iFilePath)
     return
 
@@ -55,6 +59,13 @@ def run_calc(IDirEntry1, file0000Path, file0001Path):
     sp.call(["start", os.path.join(run_folder_path,"run.bat")], shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     return
 
+
+def dump_settings(settings, key, value):
+    settings[key] = value
+    with open('settings.json', 'w') as f:
+        json.dump(settings, f)
+
+
 def main():
     ## 全体の構成
     root = tk.Tk()
@@ -62,6 +73,10 @@ def main():
     # root.geometry("300x100")
 
     nb = ttk.Notebook(root)
+
+    ##jsonファイルからの設定の読み込み
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
 
     ##タブの作成
     install_tab = tk.Frame(nb, bg='white')
@@ -92,13 +107,9 @@ def main():
 
     ## インストールタブ
     install_tab_link1.pack(pady=10)
-    # install_tab_link1.bind("<Button-1>",lambda e:link_click("https://github.com/OpenRadioss/OpenRadioss/releases"))
     install_tab_link1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "openradioss_install_win.html")))
-    # install_tab_brank1.pack()
     install_tab_link2.pack(pady=10)
-    # install_tab_link2.bind("<Button-1>",lambda e:link_click("https://gmsh.info/"))
     install_tab_link2.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "gmsh_install_win.html")))
-    # install_tab_brank2.pack()
     install_tab_link3.pack(pady=10)
     install_tab_link3.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "paraview_install_win.html")))
 
@@ -111,33 +122,36 @@ def main():
     entry1 = tk.StringVar()
     IDirEntry1 = ttk.Entry(pass_tab, textvariable=entry1, width=60)
     IDirButton1 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry1))
-    IDirEntry1.insert(0, "C:\\OpenRadioss_win64\\OpenRadioss")
+    IDirEntry1.insert(0, settings["default_path_openradioss"])
 
     IDirLabel2 = ttk.Label(pass_tab, text="Gmshのフォルダパス")
     entry2 = tk.StringVar()
     IDirEntry2 = ttk.Entry(pass_tab, textvariable=entry2, width=60)
     IDirButton2 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry2))
-    IDirEntry2.insert(0, "C:\gmsh-4.11.1-Windows64")
+    IDirEntry2.insert(0, settings["default_path_gmsh"])
     
     IDirLabel3 = ttk.Label(pass_tab, text="ParaViewのフォルダパス")
     entry3 = tk.StringVar()
     IDirEntry3 = ttk.Entry(pass_tab, textvariable=entry3, width=60)
     IDirButton3 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry3))
-    IDirEntry3.insert(0, "C:\\Program Files\\ParaView 5.11.2")
+    IDirEntry3.insert(0, settings["default_path_paraview"])
 
     ### パスタブ
     passDocLabel1.grid(row=0,column=0,padx=10,pady=10)
 
     IDirLabel1.grid(row=1,column=0,padx=10)
     IDirEntry1.grid(row=1,column=1,padx=10)
+    IDirEntry1.bind("<Enter>",lambda event: dump_settings(settings, "default_path_openradioss", IDirEntry1.get()))
     IDirButton1.grid(row=1,column=2,padx=10)
 
     IDirLabel2.grid(row=2,column=0,padx=10)
     IDirEntry2.grid(row=2,column=1,padx=10)
+    IDirEntry2.bind("<Enter>",lambda event: dump_settings(settings, "default_path_gmsh", IDirEntry2.get()))
     IDirButton2.grid(row=2,column=2,padx=10)
 
     IDirLabel3.grid(row=3,column=0,padx=10)
     IDirEntry3.grid(row=3,column=1,padx=10)
+    IDirEntry3.bind("<Enter>",lambda event: dump_settings(settings, "default_path_paraview", IDirEntry3.get()))
     IDirButton3.grid(row=3,column=2,padx=10)
 
     ## メッシュタブ
@@ -160,19 +174,15 @@ def main():
     calc_tab_IFileLabel1 = ttk.Label(calc_tab, text="0000ファイルの指定")
     calc_tab_entry1 = tk.StringVar()
     calc_tab_IFileEntry1 = ttk.Entry(calc_tab, textvariable=calc_tab_entry1, width=60)
+    calc_tab_IFileEntry1.insert(0, settings["before_input_0000file"])
     calc_tab_IFileButton1 = ttk.Button(calc_tab, text="参照", command=lambda:filedialog_clicked(calc_tab_IFileEntry1))
-
-    ### for debug
-    calc_tab_IFileEntry1.insert(0, "C:\\Users\\hamma\\Documents\\OradAS_test\\daruma1_0000.rad")
 
     calc_tab_IFileLabel2 = ttk.Label(calc_tab, text="0001ファイルの指定")
     calc_tab_entry2 = tk.StringVar()
     calc_tab_IFileEntry2 = ttk.Entry(calc_tab, textvariable=calc_tab_entry2, width=60)
+    calc_tab_IFileEntry2.insert(0, settings["before_input_0001file"])
     calc_tab_IFileButton2 = ttk.Button(calc_tab, text="参照", command=lambda:filedialog_clicked(calc_tab_IFileEntry2))
     
-    ### For debug
-    calc_tab_IFileEntry2.insert(0, "C:\\Users\\hamma\\Documents\\OradAS_test\\daruma1_0001.rad")
-
     calc_tab_IFileLabel3 = ttk.Label(calc_tab, text="OpenRadiossの実行")
     calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2))
 
@@ -181,10 +191,12 @@ def main():
 
     calc_tab_IFileLabel1.grid(row=1,column=0,padx=10)
     calc_tab_IFileEntry1.grid(row=1,column=1,padx=10)
+    calc_tab_IFileEntry1.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0000file", calc_tab_IFileEntry1.get()))
     calc_tab_IFileButton1.grid(row=1,column=2,padx=10)
 
     calc_tab_IFileLabel2.grid(row=3,column=0,padx=10)
     calc_tab_IFileEntry2.grid(row=3,column=1,padx=10)
+    calc_tab_IFileEntry2.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0001file", calc_tab_IFileEntry2.get()))
     calc_tab_IFileButton2.grid(row=3,column=2,padx=10)
 
     calc_tab_IFileLabel3.grid(row=5,column=0,padx=10)
