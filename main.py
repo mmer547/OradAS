@@ -82,12 +82,14 @@ def main():
     install_tab = tk.Frame(nb, bg='white')
     pass_tab = tk.Frame(nb, bg='white')
     mesh_tab = tk.Frame(nb, bg='white')
+    input_tab = tk.Frame(nb, bg='white')
     calc_tab = tk.Frame(nb, bg='white')
     post_tab = tk.Frame(nb, bg='white')
 
     nb.add(install_tab, text="インストール", underline=0)
     nb.add(pass_tab, text="パス入力")
     nb.add(mesh_tab, text="メッシュ作成")
+    nb.add(input_tab, text="インプット作成")
     nb.add(calc_tab, text="計算実行")
     nb.add(post_tab, text="結果処理")
 
@@ -98,11 +100,11 @@ def main():
     ## installタブ
     install_tab_link1 = tk.Label(install_tab,text="OpenRadiossのインストール",
                                fg="blue",cursor="hand1")
-    install_tab_brank1 = tk.Label(install_tab, text="")
     install_tab_link2 = tk.Label(install_tab,text="Gmshのインストール",
                                fg="blue",cursor="hand1")
-    install_tab_brank2 = tk.Label(install_tab, text="")
-    install_tab_link3 = tk.Label(install_tab,text="ParaViewのインストール",
+    install_tab_link3 = tk.Label(install_tab,text="VSCodeのインストール",
+                               fg="blue",cursor="hand1")
+    install_tab_link4 = tk.Label(install_tab,text="ParaViewのインストール",
                                fg="blue",cursor="hand1")
 
     ## インストールタブ
@@ -111,7 +113,9 @@ def main():
     install_tab_link2.pack(pady=10)
     install_tab_link2.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "gmsh_install_win.html")))
     install_tab_link3.pack(pady=10)
-    install_tab_link3.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "paraview_install_win.html")))
+    install_tab_link3.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "vscode_install_win.html")))
+    install_tab_link4.pack(pady=10)
+    install_tab_link4.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "paraview_install_win.html")))
 
     ## パスタブ
     passDocLabel1 = tk.Label(pass_tab,text="パスタブの設定について",
@@ -130,11 +134,17 @@ def main():
     IDirButton2 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry2))
     IDirEntry2.insert(0, settings["default_path_gmsh"])
     
-    IDirLabel3 = ttk.Label(pass_tab, text="ParaViewのフォルダパス")
+    IDirLabel3 = ttk.Label(pass_tab, text="VScodeのフォルダパス")
     entry3 = tk.StringVar()
     IDirEntry3 = ttk.Entry(pass_tab, textvariable=entry3, width=60)
     IDirButton3 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry3))
-    IDirEntry3.insert(0, settings["default_path_paraview"])
+    IDirEntry3.insert(0, settings["default_path_vscode"])
+
+    IDirLabel4 = ttk.Label(pass_tab, text="ParaViewのフォルダパス")
+    entry4 = tk.StringVar()
+    IDirEntry4 = ttk.Entry(pass_tab, textvariable=entry4, width=60)
+    IDirButton4 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry4))
+    IDirEntry4.insert(0, settings["default_path_paraview"])
 
     ### パスタブ
     passDocLabel1.grid(row=0,column=0,padx=10,pady=10)
@@ -151,8 +161,13 @@ def main():
 
     IDirLabel3.grid(row=3,column=0,padx=10)
     IDirEntry3.grid(row=3,column=1,padx=10)
-    IDirEntry3.bind("<Enter>",lambda event: dump_settings(settings, "default_path_paraview", IDirEntry3.get()))
+    IDirEntry3.bind("<Enter>",lambda event: dump_settings(settings, "default_path_vscode", IDirEntry3.get()))
     IDirButton3.grid(row=3,column=2,padx=10)
+
+    IDirLabel4.grid(row=4,column=0,padx=10)
+    IDirEntry4.grid(row=4,column=1,padx=10)
+    IDirEntry4.bind("<Enter>",lambda event: dump_settings(settings, "default_path_paraview", IDirEntry4.get()))
+    IDirButton4.grid(row=4,column=2,padx=10)
 
     ## メッシュタブ
     meshDocLabel1 = tk.Label(mesh_tab,text="メッシュタブの操作について",
@@ -166,6 +181,19 @@ def main():
     meshDocLabel1.grid(row=0,column=0,padx=10,pady=10)
     mesh_tab_IDirLabel1.grid(row=1,column=0,padx=10)
     mesh_tab_IDirButton3.grid(row=1,column=1,padx=10)
+
+    ### インプット作成タブ部品
+    input_tab_Label1 = tk.Label(input_tab,text="インプット入力タブの操作について",
+                               fg="blue",cursor="hand1")
+    input_tab_Label1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "input_tab_win.html")))
+    input_tab_IDirLabel1 = ttk.Label(input_tab, text="VSCodeの起動")
+    vscode_path = os.path.join(IDirEntry3.get(),"Code.exe --new-window")
+    input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:sp.call(vscode_path))
+
+    ### インプット作成タブパック
+    input_tab_Label1.grid(row=0,column=0,padx=10,pady=10)
+    input_tab_IDirLabel1.grid(row=1,column=0,padx=10)
+    input_tab_IDirButton1.grid(row=1,column=1,padx=10)
 
     ## カルクタブ
     calcDocLabel1 = tk.Label(calc_tab,text="計算実行タブの操作について",
@@ -187,29 +215,30 @@ def main():
     calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2))
 
     ### パック
+    #### ドキュメントのリンク
     calcDocLabel1.grid(row=0,column=0,padx=10,pady=10)
-
+    #### 0000ファイルの指定
     calc_tab_IFileLabel1.grid(row=1,column=0,padx=10)
     calc_tab_IFileEntry1.grid(row=1,column=1,padx=10)
     calc_tab_IFileEntry1.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0000file", calc_tab_IFileEntry1.get()))
     calc_tab_IFileButton1.grid(row=1,column=2,padx=10)
-
+    #### 0001ファイルの指定
     calc_tab_IFileLabel2.grid(row=3,column=0,padx=10)
     calc_tab_IFileEntry2.grid(row=3,column=1,padx=10)
     calc_tab_IFileEntry2.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0001file", calc_tab_IFileEntry2.get()))
     calc_tab_IFileButton2.grid(row=3,column=2,padx=10)
-
+    #### 計算実行ボタン
     calc_tab_IFileLabel3.grid(row=5,column=0,padx=10)
     calc_tab_IFileButton3.grid(row=5,column=2,padx=10)
 
-    ## ポストタブ
+    ## ポストタブの部品
     postDocLabel1 = tk.Label(post_tab,text="計算実行タブの操作について",
                                fg="blue",cursor="hand1")
     postDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "post_tab_win.html")))
     post_tab_IDirLabel2 = ttk.Label(post_tab, text="ParaViewの起動")
-    paraview_path = os.path.join(IDirEntry3.get(),"bin","paraview.exe")
+    paraview_path = os.path.join(IDirEntry4.get(),"bin","paraview.exe")
     post_tab_IDirButton2 = ttk.Button(post_tab, text="ParaView起動", command=lambda:sp.call(paraview_path))
-    ### 配置
+    ### ポストタブの配置
     postDocLabel1.grid(row=0,column=0,padx=10)
     post_tab_IDirLabel2.grid(row=1,column=0,padx=10)
     post_tab_IDirButton2.grid(row=1,column=1,padx=10)
