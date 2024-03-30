@@ -232,14 +232,14 @@ def main():
     calc_tab_IFileButton3.grid(row=5,column=2,padx=10)
 
     ## ポストタブの部品
-    postDocLabel1 = tk.Label(post_tab,text="計算実行タブの操作について",
+    postDocLabel1 = tk.Label(post_tab,text="計算結果処理タブの操作について",
                                fg="blue",cursor="hand1")
     postDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "post_tab_win.html")))
     post_tab_IDirLabel2 = ttk.Label(post_tab, text="ParaViewの起動")
     paraview_path = os.path.join(IDirEntry4.get(),"bin","paraview.exe")
     post_tab_IDirButton2 = ttk.Button(post_tab, text="ParaView起動", command=lambda:sp.call(paraview_path))
     ### ポストタブの配置
-    postDocLabel1.grid(row=0,column=0,padx=10)
+    postDocLabel1.grid(row=0,column=0,padx=10,pady=10)
     post_tab_IDirLabel2.grid(row=1,column=0,padx=10)
     post_tab_IDirButton2.grid(row=1,column=1,padx=10)
 
