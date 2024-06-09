@@ -3,17 +3,18 @@ import tkinter.ttk as ttk
 from tkinter import filedialog
 import os
 import subprocess as sp
+import json
 
 from install_tab import *
 
-import json
-
 def dirdialog_clicked(IDirEntry):
+    
     iDir = os.path.abspath(os.path.dirname(__file__))
     iDirPath = filedialog.askdirectory(initialdir = iDir)
     IDirEntry.delete(0, "end")
     IDirEntry.insert(tk.END, iDirPath)
     return
+
 
 def filedialog_clicked(IFileEntry):
     iFile = os.path.abspath(os.path.dirname(IFileEntry.get()))
@@ -22,7 +23,8 @@ def filedialog_clicked(IFileEntry):
     IFileEntry.insert(tk.END, iFilePath)
     return
 
-def run_calc(IDirEntry1, file0000Path, file0001Path):
+
+def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums):
     run_folder_path = os.path.dirname(file0000Path.get())
 
     with open(os.path.join(run_folder_path, "run.bat"), "w") as f:
@@ -33,8 +35,13 @@ def run_calc(IDirEntry1, file0000Path, file0001Path):
         f.write("set KMP_STACKSIZE=400m" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\hm_reader\win64;%PATH%" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\intelOneAPI_runtime\win64;%PATH%" + "\n")
-        f.write("{0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64.exe"), os.path.basename(file0000Path.get())))
-        f.write("{0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64.exe"), os.path.basename(file0001Path.get())))
+        if int(parallel_nums.get())<=1:
+            f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64.exe"), os.path.basename(file0000Path.get())))
+            f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64.exe"), os.path.basename(file0001Path.get())))
+        else:
+            f.write("call {0}\n".format('"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"'))
+            f.write("call {0} -i {1} -np {2}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64.exe"), os.path.basename(file0000Path.get()),parallel_nums.get()))
+            f.write("call mpiexec -delegate -n {2} {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64_impi.exe"), os.path.basename(file0001Path.get()),parallel_nums.get()))
         f.write("call convert.bat")
 
     file_name = os.path.splitext(os.path.basename(file0000Path.get()))[0]
@@ -55,7 +62,6 @@ def run_calc(IDirEntry1, file0000Path, file0001Path):
         f.write("    )\n")
         f.write(")\n")
 
-    # sp.run("C:\\Users\\hamma\\Documents\\OradAS_test\\run.bat", shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     sp.call(["start", os.path.join(run_folder_path,"run.bat")], shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     return
 
@@ -211,8 +217,13 @@ def main():
     calc_tab_IFileEntry2.insert(0, settings["before_input_0001file"])
     calc_tab_IFileButton2 = ttk.Button(calc_tab, text="参照", command=lambda:filedialog_clicked(calc_tab_IFileEntry2))
     
+    calc_tab_parallel_cpus_label = ttk.Label(calc_tab, text="並列CPU数")
+    parallel_nums = [i + 1 for i in range(os.cpu_count())]
+    calc_tab_parallel_cpus_value = ttk.Combobox(calc_tab, value=parallel_nums, width=5)    
+    calc_tab_parallel_cpus_value.set(1)
+
     calc_tab_IFileLabel3 = ttk.Label(calc_tab, text="OpenRadiossの実行")
-    calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2))
+    calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value))
 
     ### パック
     #### ドキュメントのリンク
@@ -227,9 +238,12 @@ def main():
     calc_tab_IFileEntry2.grid(row=3,column=1,padx=10)
     calc_tab_IFileEntry2.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0001file", calc_tab_IFileEntry2.get()))
     calc_tab_IFileButton2.grid(row=3,column=2,padx=10)
+    #### 並列計算
+    calc_tab_parallel_cpus_label.grid(row=5,column=0,padx=10)
+    calc_tab_parallel_cpus_value.grid(row=5,column=2,padx=10)
     #### 計算実行ボタン
-    calc_tab_IFileLabel3.grid(row=5,column=0,padx=10)
-    calc_tab_IFileButton3.grid(row=5,column=2,padx=10)
+    calc_tab_IFileLabel3.grid(row=7,column=0,padx=10)
+    calc_tab_IFileButton3.grid(row=7,column=2,padx=10)
 
     ## ポストタブの部品
     postDocLabel1 = tk.Label(post_tab,text="結果処理タブの操作について",
