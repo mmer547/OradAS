@@ -15,7 +15,9 @@ OradAS開発中の機能についてはissueをご覧ください。
 ## バージョン履歴
 
 2024/03/30 : Version 1.0 release.基本的な機能を実装。
+
 2024/03/30 : Version 1.1 release.結果処理タブの誤字修正。
+
 2024/03/30 : Version 1.2 release.並列計算CPU数の指定機能追加。
 
 ## 起動要件
@@ -65,7 +67,9 @@ For more information about features under development in OradAS, please see the 
 ## Version up log
 
 2024/03/30 : Version 1.0 release. Has a basic function.
+
 2024/03/30 : Version 1.1 release. Correction of typographical errors in the results processing tab.
+
 2024/03/30 : Version 1.2 release. Additional functionality for specifying the number of parallel calculation CPUs.
 
 ## requirement
