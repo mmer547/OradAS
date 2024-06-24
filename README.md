@@ -46,6 +46,8 @@ Python (>=3.10)
 
 ![Alt text](./assets/image.png)
 
+2024/6/24追記　OpenRadiossのパス設定でうまくいかない場合があるようで、その場合はドキュメントと同じパスにOpenRadiossを置いてお試しください。次バージョンで修正予定です。
+
 ## ライセンス
 
 OradASはMIT licenseを採用しています。
@@ -97,6 +99,8 @@ First, please install the various software and add-ins from the documents in the
 Next, set the software folder path from the Path input tab and you are ready to use the software. 
 
 ![Alt text](./assets/image.png)
+
+Added on 6/24/2024: It seems that the OpenRadioss path setting may not work, in that case, please try placing OpenRadioss in the same path as the document.This will be fixed in the next version.
 
 ## License
 
