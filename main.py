@@ -24,8 +24,9 @@ def filedialog_clicked(IFileEntry):
     return
 
 
-def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums):
-    run_folder_path = os.path.dirname(file0000Path.get())
+def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
+             calc_tab_precision_value):
+    run_folder_path = os.path.dirname(file0000Path.get(),)
 
     with open(os.path.join(run_folder_path, "run.bat"), "w") as f:
         f.write("cd /d {0}\n".format(run_folder_path))
@@ -35,13 +36,17 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums):
         f.write("set KMP_STACKSIZE=400m" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\hm_reader\win64;%PATH%" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\intelOneAPI_runtime\win64;%PATH%" + "\n")
+        if calc_tab_precision_value.get() == "単精度":
+            precision_flag = "_sp"
+        else:
+            precision_flag = ""
         if int(parallel_nums.get())<=1:
-            f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64.exe"), os.path.basename(file0000Path.get())))
-            f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64.exe"), os.path.basename(file0001Path.get())))
+                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64"+precision_flag+".exe"), os.path.basename(file0000Path.get())))
+                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64"+precision_flag+".exe"), os.path.basename(file0001Path.get())))
         else:
             f.write("call {0}\n".format('"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"'))
-            f.write("call {0} -i {1} -np {2}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64.exe"), os.path.basename(file0000Path.get()),parallel_nums.get()))
-            f.write("call mpiexec -delegate -n {2} {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64_impi.exe"), os.path.basename(file0001Path.get()),parallel_nums.get()))
+            f.write("call {0} -i {1} -np {2}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64"+precision_flag+".exe"), os.path.basename(file0000Path.get()),parallel_nums.get()))
+            f.write("call mpiexec -delegate -n {2} {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64_impi"+precision_flag+".exe"), os.path.basename(file0001Path.get()),parallel_nums.get()))
         f.write("call convert.bat")
 
     file_name = os.path.splitext(os.path.basename(file0000Path.get()))[0]
@@ -222,8 +227,14 @@ def main():
     calc_tab_parallel_cpus_value = ttk.Combobox(calc_tab, value=parallel_nums, width=5)    
     calc_tab_parallel_cpus_value.set(1)
 
+    calc_tab_precision_label = ttk.Label(calc_tab, text="並列CPU数")
+    precision_values = ["倍精度","単精度"]
+    calc_tab_precision_value = ttk.Combobox(calc_tab, value=precision_values, width=10)
+    calc_tab_precision_value.set("倍精度")
+
     calc_tab_IFileLabel3 = ttk.Label(calc_tab, text="OpenRadiossの実行")
-    calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value))
+    calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value,
+                                                                                         calc_tab_precision_value))
 
     ### パック
     #### ドキュメントのリンク
@@ -241,6 +252,9 @@ def main():
     #### 並列計算
     calc_tab_parallel_cpus_label.grid(row=5,column=0,padx=10)
     calc_tab_parallel_cpus_value.grid(row=5,column=2,padx=10)
+    #### 計算精度
+    calc_tab_precision_label.grid(row=6,column=0,padx=10)
+    calc_tab_precision_value.grid(row=6,column=2,padx=10)
     #### 計算実行ボタン
     calc_tab_IFileLabel3.grid(row=7,column=0,padx=10)
     calc_tab_IFileButton3.grid(row=7,column=2,padx=10)
