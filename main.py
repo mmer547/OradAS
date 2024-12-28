@@ -66,6 +66,17 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
         f.write("        )\n")
         f.write("    )\n")
         f.write(")\n")
+        f.write("set chk={0}T\n".format(file_name[0:file_name.rfind("_0000")]))
+        f.write("for %%i in (*) do (\n")
+        f.write('    echo %%i | find "%chk%" >NUL\n')
+        f.write("    if not ERRORLEVEL 1 (\n")
+        f.write('        echo %%i | find ".vtk" >NUL\n')
+        f.write("        if ERRORLEVEL 1 (\n")
+        f.write("            call\n")
+        f.write("{0} %%i\n".format(os.path.join(IDirEntry1.get(), "exec", "th_to_csv_win64.exe")))
+        f.write("        )\n")
+        f.write("    )\n")
+        f.write(")\n")
 
     sp.call(["start", os.path.join(run_folder_path,"run.bat")], shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
     return

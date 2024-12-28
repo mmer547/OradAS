@@ -26,6 +26,8 @@ OradAS開発中の機能についてはissueをご覧ください。
 
 2024/12/28 : Version 1.5 release.倍精度、単精のソルバを変更できる機能の追加。
 
+2024/12/28 : Version 1.6 release.Tファイルをcsvファイルに自動で変換する処理を追加。
+
 ## 起動要件
 
 Python (>=3.10)
@@ -85,6 +87,8 @@ For more information about features under development in OradAS, please see the 
 2024/12/28 : Version 1.4 release.Solves a problem where calculations cannot be executed outside the C drive.
 
 28/12/2024 : Version 1.5 release.Added the ability to change double precision and single precision solvers.
+
+28/12/2024 : Version 1.6 release.Added automatic conversion of T files to csv files.
 
 ## requirement
 
