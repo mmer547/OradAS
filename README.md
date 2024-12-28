@@ -20,6 +20,8 @@ OradAS開発中の機能についてはissueをご覧ください。
 
 2024/03/30 : Version 1.2 release.並列計算CPU数の指定機能追加。
 
+2024/03/30 : Version 1.3 release.OpenRadiossインストールパスが固定になっていた問題の解消。
+
 ## 起動要件
 
 Python (>=3.10)
@@ -73,6 +75,8 @@ For more information about features under development in OradAS, please see the 
 2024/03/30 : Version 1.1 release. Correction of typographical errors in the results processing tab.
 
 2024/03/30 : Version 1.2 release. Additional functionality for specifying the number of parallel calculation CPUs.
+
+2024/03/30 : Version 1.3 release.Fixed problem with fixed OpenRadioss installation path.
 
 ## requirement
 
