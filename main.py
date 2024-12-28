@@ -28,7 +28,7 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums):
     run_folder_path = os.path.dirname(file0000Path.get())
 
     with open(os.path.join(run_folder_path, "run.bat"), "w") as f:
-        f.write("cd {0}\n".format(run_folder_path))
+        f.write("cd /d {0}\n".format(run_folder_path))
         f.write("set OPENRADIOSS_PATH=" + IDirEntry1.get() + "\n")
         f.write("set RAD_CFG_PATH=%OPENRADIOSS_PATH%\hm_cfg_files" + "\n")
         f.write("set RAD_H3D_PATH=%OPENRADIOSS_PATH%\extlib\h3d\lib\win64" + "\n")
