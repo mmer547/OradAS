@@ -28,6 +28,8 @@ OradAS開発中の機能についてはissueをご覧ください。
 
 2024/12/28 : Version 1.6 release.Tファイルをcsvファイルに自動で変換する処理を追加。
 
+2024/12/29 : Version 1.7 release.StackSizeを変更できる機能を追加。
+
 ## 起動要件
 
 Python (>=3.10)
@@ -89,6 +91,8 @@ For more information about features under development in OradAS, please see the 
 28/12/2024 : Version 1.5 release.Added the ability to change double precision and single precision solvers.
 
 28/12/2024 : Version 1.6 release.Added automatic conversion of T files to csv files.
+
+29/12/2024 : Version 1.7 release.Added the ability to change the StackSize.
 
 ## requirement
 

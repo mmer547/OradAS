@@ -25,7 +25,7 @@ def filedialog_clicked(IFileEntry):
 
 
 def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
-             calc_tab_precision_value):
+             calc_tab_precision_value, calc_tab_stack_size):
     run_folder_path = os.path.dirname(file0000Path.get(),)
 
     with open(os.path.join(run_folder_path, "run.bat"), "w") as f:
@@ -33,7 +33,7 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
         f.write("set OPENRADIOSS_PATH=" + IDirEntry1.get() + "\n")
         f.write("set RAD_CFG_PATH=%OPENRADIOSS_PATH%\hm_cfg_files" + "\n")
         f.write("set RAD_H3D_PATH=%OPENRADIOSS_PATH%\extlib\h3d\lib\win64" + "\n")
-        f.write("set KMP_STACKSIZE=400m" + "\n")
+        f.write("set KMP_STACKSIZE=" + calc_tab_stack_size.get() + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\hm_reader\win64;%PATH%" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\intelOneAPI_runtime\win64;%PATH%" + "\n")
         if calc_tab_precision_value.get() == "単精度":
@@ -238,14 +238,19 @@ def main():
     calc_tab_parallel_cpus_value = ttk.Combobox(calc_tab, value=parallel_nums, width=5)    
     calc_tab_parallel_cpus_value.set(1)
 
-    calc_tab_precision_label = ttk.Label(calc_tab, text="並列CPU数")
+    calc_tab_precision_label = ttk.Label(calc_tab, text="精度選択")
     precision_values = ["倍精度","単精度"]
     calc_tab_precision_value = ttk.Combobox(calc_tab, value=precision_values, width=10)
     calc_tab_precision_value.set("倍精度")
 
+    calc_tab_stack_size_label = ttk.Label(calc_tab, text="スタックサイズ")
+    calc_tab_stack_size = tk.StringVar()
+    calc_tab_stack_size = ttk.Entry(calc_tab, textvariable=calc_tab_stack_size, width=10)
+    calc_tab_stack_size.insert(0, "400m")
+
     calc_tab_IFileLabel3 = ttk.Label(calc_tab, text="OpenRadiossの実行")
     calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value,
-                                                                                         calc_tab_precision_value))
+                                                                                         calc_tab_precision_value, calc_tab_stack_size))
 
     ### パック
     #### ドキュメントのリンク
@@ -266,9 +271,12 @@ def main():
     #### 計算精度
     calc_tab_precision_label.grid(row=6,column=0,padx=10)
     calc_tab_precision_value.grid(row=6,column=2,padx=10)
+    #### スタックサイズ
+    calc_tab_stack_size_label.grid(row=7,column=0,padx=10)
+    calc_tab_stack_size.grid(row=7,column=2,padx=10)
     #### 計算実行ボタン
-    calc_tab_IFileLabel3.grid(row=7,column=0,padx=10)
-    calc_tab_IFileButton3.grid(row=7,column=2,padx=10)
+    calc_tab_IFileLabel3.grid(row=8,column=0,padx=10)
+    calc_tab_IFileButton3.grid(row=8,column=2,padx=10)
 
     ## ポストタブの部品
     postDocLabel1 = tk.Label(post_tab,text="結果処理タブの操作について",
