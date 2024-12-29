@@ -4,6 +4,7 @@ from tkinter import filedialog
 import os
 import subprocess as sp
 import json
+import shutil
 
 from install_tab import *
 
@@ -21,6 +22,19 @@ def filedialog_clicked(IFileEntry):
     iFilePath = filedialog.askopenfilename(initialdir = iFile)
     IFileEntry.delete(0, "end")
     IFileEntry.insert(tk.END, iFilePath)
+    return
+
+
+def run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var):
+    if input_tab_load_sample_var.get() == True:
+        sample_path = os.path.join(os.path.dirname(__file__),"sample","impact_0000.rad")
+        shutil.copy2(sample_path, input_tab_workdir_entry.get())
+        sample_path = os.path.join(os.path.dirname(__file__),"sample","impact_0001.rad")
+        shutil.copy2(sample_path, input_tab_workdir_entry.get())
+        sample_path = os.path.join(os.path.dirname(__file__),"sample","impact_mesh.rad")
+        shutil.copy2(sample_path, input_tab_workdir_entry.get())
+    print(vscode_path + " " + input_tab_workdir_entry.get())
+    sp.call(vscode_path + " " + input_tab_workdir_entry.get())
     return
 
 
@@ -205,17 +219,37 @@ def main():
     mesh_tab_IDirButton3.grid(row=1,column=1,padx=10)
 
     ### インプット作成タブ部品
+    input_tab_workdir_label = ttk.Label(input_tab, text="作業フォルダのパス")
+    input_tab_workdir_entry_var = tk.StringVar()
+    input_tab_workdir_entry = ttk.Entry(input_tab, textvariable=input_tab_workdir_entry_var, width=60)
+    input_tab_workdir_button = ttk.Button(input_tab, text="参照", command=lambda:dirdialog_clicked(input_tab_workdir_entry))
+    input_tab_workdir_entry.insert(0, settings["current_workdir"])
+
+    input_tab_load_sample_label = ttk.Label(input_tab, text="サンプルファイルのロード")
+    input_tab_load_sample_var = tk.BooleanVar()
+    input_tab_load_sample_chk = ttk.Checkbutton(input_tab, variable=input_tab_load_sample_var)
+
     input_tab_Label1 = tk.Label(input_tab,text="インプット入力タブの操作について",
                                fg="blue",cursor="hand1")
     input_tab_Label1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "input_tab_win.html")))
     input_tab_IDirLabel1 = ttk.Label(input_tab, text="VSCodeの起動")
     vscode_path = os.path.join(IDirEntry3.get(),"Code.exe --new-window")
-    input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:sp.call(vscode_path))
+    # input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:sp.call(vscode_path))
+    input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var))
 
     ### インプット作成タブパック
     input_tab_Label1.grid(row=0,column=0,padx=10,pady=10)
-    input_tab_IDirLabel1.grid(row=1,column=0,padx=10)
-    input_tab_IDirButton1.grid(row=1,column=1,padx=10)
+
+    input_tab_workdir_label.grid(row=1,column=0,padx=10)
+    input_tab_workdir_entry.grid(row=1,column=1,padx=10)
+    input_tab_workdir_entry.bind("<Enter>",lambda event: dump_settings(settings, "current_workdir", input_tab_workdir_entry.get()))
+    input_tab_workdir_button.grid(row=1,column=2,padx=10)
+
+    input_tab_load_sample_label.grid(row=2,column=0,padx=10)
+    input_tab_load_sample_chk.grid(row=2,column=2,padx=10)
+
+    input_tab_IDirLabel1.grid(row=3,column=0,padx=10)
+    input_tab_IDirButton1.grid(row=3,column=2,padx=10)
 
     ## カルクタブ
     calcDocLabel1 = tk.Label(calc_tab,text="計算実行タブの操作について",

@@ -1,0 +1,55 @@
+#RADIOSS STARTER
+/BEGIN
+impact
+      2021
+                  kg                  mm                   s
+                  kg                  mm                   s
+#include impact_mesh.rad
+/BCS/1
+fix_rigid
+   111 111                   3
+/INTER/TYPE24/1
+cylinder2shell
+  12000004         0         4 
+                                       1
+/SURF/PART/EXT/12000004
+INTER_group_2000004_of_PART
+   2000004   3000001
+/PART/2000004
+shell_4p
+         1         1
+/PROP/TYPE1/1
+shell_prop
+1
+
+                       0.4
+/MAT/LAW44/1
+plate_mat
+2.70000E-6
+      70.0      0.34
+     0.267      0.32       0.0
+
+      0.28
+/PART/3000001
+cylinder
+         2         2
+/PROP/TYPE14/2
+cylinder
+         1
+/MAT/LAW1/2
+cylinder_mat
+7.80000E-6
+     200.0       0.3
+/RBODY/1
+rbody_title
+      2000                                                           3
+/INIVEL/TRA/1
+inivel_axis_title
+                                                      -150.0     92000
+/GRNOD/NODE/92000
+grnd_title
+      2000
+/TH/RBODY/1
+rbody_title
+FX
+/END

@@ -30,6 +30,8 @@ OradAS開発中の機能についてはissueをご覧ください。
 
 2024/12/29 : Version 1.7 release.StackSizeを変更できる機能を追加。
 
+2024/12/29 : Version 2.0 release.VisualStudioCodeを起動時に作業フォルダを選択できるようにした。作業フォルダにサンプル0000ファイルと0001ファイルを作成するようにした。
+
 ## 起動要件
 
 Python (>=3.10)
@@ -93,6 +95,8 @@ For more information about features under development in OradAS, please see the 
 28/12/2024 : Version 1.6 release.Added automatic conversion of T files to csv files.
 
 29/12/2024 : Version 1.7 release.Added the ability to change the StackSize.
+
+2024/12/29 : Version 2.0 release.Allows the user to select a working folder when starting VisualStudioCode.Sample 0000 and 0001 files are created in the working folder.
 
 ## requirement
 
