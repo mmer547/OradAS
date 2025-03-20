@@ -5,11 +5,13 @@ import os
 import subprocess as sp
 import json
 import shutil
+import sys
 
 from install_tab import *
+from language import *
+
 
 def dirdialog_clicked(IDirEntry):
-    
     iDir = os.path.abspath(os.path.dirname(__file__))
     iDirPath = filedialog.askdirectory(initialdir = iDir)
     IDirEntry.delete(0, "end")
@@ -39,8 +41,12 @@ def run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var):
 
 
 def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
-             calc_tab_precision_value, calc_tab_stack_size):
+             calc_tab_precision_value, calc_tab_stack_size,
+             set_langs):
+
     run_folder_path = os.path.dirname(file0000Path.get(),)
+    lang_set = choose_lang(set_langs)
+
 
     with open(os.path.join(run_folder_path, "run.bat"), "w") as f:
         f.write("cd /d {0}\n".format(run_folder_path))
@@ -50,7 +56,7 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
         f.write("set KMP_STACKSIZE=" + calc_tab_stack_size.get() + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\hm_reader\win64;%PATH%" + "\n")
         f.write("set PATH=%OPENRADIOSS_PATH%\extlib\intelOneAPI_runtime\win64;%PATH%" + "\n")
-        if calc_tab_precision_value.get() == "単精度":
+        if calc_tab_precision_value.get() == lang_set["w_precision1"]:
             precision_flag = "_sp"
         else:
             precision_flag = ""
@@ -102,19 +108,21 @@ def dump_settings(settings, key, value):
         json.dump(settings, f)
 
 
-def main():
-    ## 全体の構成
+def main(set_langs):
+    lang_set = choose_lang(set_langs)
+
+    ## Overall composition
     root = tk.Tk()
     root.title("OradAS")
     # root.geometry("300x100")
 
     nb = ttk.Notebook(root)
 
-    ##jsonファイルからの設定の読み込み
+    ##Reading settings from a json file
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
-    ##タブの作成
+    ##Creating tabs
     install_tab = tk.Frame(nb, bg='white')
     pass_tab = tk.Frame(nb, bg='white')
     mesh_tab = tk.Frame(nb, bg='white')
@@ -122,28 +130,28 @@ def main():
     calc_tab = tk.Frame(nb, bg='white')
     post_tab = tk.Frame(nb, bg='white')
 
-    nb.add(install_tab, text="インストール", underline=0)
-    nb.add(pass_tab, text="パス入力")
-    nb.add(mesh_tab, text="メッシュ作成")
-    nb.add(input_tab, text="インプット作成")
-    nb.add(calc_tab, text="計算実行")
-    nb.add(post_tab, text="結果処理")
+    nb.add(install_tab, text=lang_set["w_install_tab_title"], underline=0)
+    nb.add(pass_tab, text=lang_set["w_pass_tab_title"])
+    nb.add(mesh_tab, text=lang_set["w_mesh_tab_title"])
+    nb.add(input_tab, text=lang_set["w_input_tab_title"])
+    nb.add(calc_tab, text=lang_set["w_calc_tab_title"])
+    nb.add(post_tab, text=lang_set["w_post_tab_title"])
 
-    # パック
+    # pack
     nb.pack(expand=True, fill='both', padx=10, pady=10)
 
-    # 部品の配置
-    ## installタブ
-    install_tab_link1 = tk.Label(install_tab,text="OpenRadiossのインストール",
+    # Arrangement of components
+    ## Install tab.
+    install_tab_link1 = tk.Label(install_tab,text=lang_set["w_install_tab_link1"],
                                fg="blue",cursor="hand1")
-    install_tab_link2 = tk.Label(install_tab,text="Gmshのインストール",
+    install_tab_link2 = tk.Label(install_tab,text=lang_set["w_install_tab_link2"],
                                fg="blue",cursor="hand1")
-    install_tab_link3 = tk.Label(install_tab,text="VSCodeのインストール",
+    install_tab_link3 = tk.Label(install_tab,text=lang_set["w_install_tab_link3"],
                                fg="blue",cursor="hand1")
-    install_tab_link4 = tk.Label(install_tab,text="ParaViewのインストール",
+    install_tab_link4 = tk.Label(install_tab,text=lang_set["w_install_tab_link4"],
                                fg="blue",cursor="hand1")
 
-    ## インストールタブ
+    ## Install tab
     install_tab_link1.pack(pady=10)
     install_tab_link1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "openradioss_install_win.html")))
     install_tab_link2.pack(pady=10)
@@ -153,36 +161,36 @@ def main():
     install_tab_link4.pack(pady=10)
     install_tab_link4.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "paraview_install_win.html")))
 
-    ## パスタブ
-    passDocLabel1 = tk.Label(pass_tab,text="パスタブの設定について",
+    ## path tabulation
+    passDocLabel1 = tk.Label(pass_tab,text=lang_set["w_passDocLabel1"],
                                fg="blue",cursor="hand1")
     passDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "path_setting_win.html")))
     
-    IDirLabel1 = ttk.Label(pass_tab, text="OpenRadiossのフォルダパス")
+    IDirLabel1 = ttk.Label(pass_tab, text=lang_set["w_IDirLabel1"])
     entry1 = tk.StringVar()
     IDirEntry1 = ttk.Entry(pass_tab, textvariable=entry1, width=60)
-    IDirButton1 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry1))
+    IDirButton1 = ttk.Button(pass_tab, text=lang_set['w_refer'], command=lambda:dirdialog_clicked(IDirEntry1))
     IDirEntry1.insert(0, settings["default_path_openradioss"])
 
-    IDirLabel2 = ttk.Label(pass_tab, text="Gmshのフォルダパス")
+    IDirLabel2 = ttk.Label(pass_tab, text=lang_set["w_IDirLabel2"])
     entry2 = tk.StringVar()
     IDirEntry2 = ttk.Entry(pass_tab, textvariable=entry2, width=60)
-    IDirButton2 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry2))
+    IDirButton2 = ttk.Button(pass_tab, text=lang_set['w_refer'], command=lambda:dirdialog_clicked(IDirEntry2))
     IDirEntry2.insert(0, settings["default_path_gmsh"])
     
-    IDirLabel3 = ttk.Label(pass_tab, text="VScodeのフォルダパス")
+    IDirLabel3 = ttk.Label(pass_tab, text=lang_set["w_IDirLabel3"])
     entry3 = tk.StringVar()
     IDirEntry3 = ttk.Entry(pass_tab, textvariable=entry3, width=60)
-    IDirButton3 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry3))
+    IDirButton3 = ttk.Button(pass_tab, text=lang_set['w_refer'], command=lambda:dirdialog_clicked(IDirEntry3))
     IDirEntry3.insert(0, settings["default_path_vscode"])
 
-    IDirLabel4 = ttk.Label(pass_tab, text="ParaViewのフォルダパス")
+    IDirLabel4 = ttk.Label(pass_tab, text=lang_set["w_IDirLabel4"])
     entry4 = tk.StringVar()
     IDirEntry4 = ttk.Entry(pass_tab, textvariable=entry4, width=60)
-    IDirButton4 = ttk.Button(pass_tab, text="参照", command=lambda:dirdialog_clicked(IDirEntry4))
+    IDirButton4 = ttk.Button(pass_tab, text=lang_set['w_refer'], command=lambda:dirdialog_clicked(IDirEntry4))
     IDirEntry4.insert(0, settings["default_path_paraview"])
 
-    ### パスタブ
+    ### path tabulation
     passDocLabel1.grid(row=0,column=0,padx=10,pady=10)
 
     IDirLabel1.grid(row=1,column=0,padx=10)
@@ -205,39 +213,38 @@ def main():
     IDirEntry4.bind("<Enter>",lambda event: dump_settings(settings, "default_path_paraview", IDirEntry4.get()))
     IDirButton4.grid(row=4,column=2,padx=10)
 
-    ## メッシュタブ
-    meshDocLabel1 = tk.Label(mesh_tab,text="メッシュタブの操作について",
+    ## mesh tab
+    meshDocLabel1 = tk.Label(mesh_tab,text=lang_set["w_meshDocLabel1"],
                                fg="blue",cursor="hand1")
     meshDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "mesh_tab_win.html")))
-    mesh_tab_IDirLabel1 = ttk.Label(mesh_tab, text="Gmshの起動")
+    mesh_tab_IDirLabel1 = ttk.Label(mesh_tab, text=lang_set["w_mesh_tab_IDirLabel1"])
     gmsh_path = os.path.join(IDirEntry2.get(),"gmsh.exe")
-    mesh_tab_IDirButton3 = ttk.Button(mesh_tab, text="Gmsh起動", command=lambda:sp.call(gmsh_path))
+    mesh_tab_IDirButton3 = ttk.Button(mesh_tab, text=lang_set["w_mesh_tab_IDirButton3"], command=lambda:sp.call(gmsh_path))
     
-    ### パック 
+    ### pack 
     meshDocLabel1.grid(row=0,column=0,padx=10,pady=10)
     mesh_tab_IDirLabel1.grid(row=1,column=0,padx=10)
     mesh_tab_IDirButton3.grid(row=1,column=1,padx=10)
 
-    ### インプット作成タブ部品
-    input_tab_workdir_label = ttk.Label(input_tab, text="作業フォルダのパス")
+    ### Input creation tab parts
+    input_tab_workdir_label = ttk.Label(input_tab, text=lang_set["w_input_tab_workdir_label"])
     input_tab_workdir_entry_var = tk.StringVar()
     input_tab_workdir_entry = ttk.Entry(input_tab, textvariable=input_tab_workdir_entry_var, width=60)
-    input_tab_workdir_button = ttk.Button(input_tab, text="参照", command=lambda:dirdialog_clicked(input_tab_workdir_entry))
+    input_tab_workdir_button = ttk.Button(input_tab, text=lang_set["w_refer"], command=lambda:dirdialog_clicked(input_tab_workdir_entry))
     input_tab_workdir_entry.insert(0, settings["current_workdir"])
 
-    input_tab_load_sample_label = ttk.Label(input_tab, text="サンプルファイルのロード")
+    input_tab_load_sample_label = ttk.Label(input_tab, text=lang_set["w_input_tab_load_sample_label"])
     input_tab_load_sample_var = tk.BooleanVar()
     input_tab_load_sample_chk = ttk.Checkbutton(input_tab, variable=input_tab_load_sample_var)
 
-    input_tab_Label1 = tk.Label(input_tab,text="インプット入力タブの操作について",
+    input_tab_Label1 = tk.Label(input_tab,text=lang_set["w_input_tab_Label1"],
                                fg="blue",cursor="hand1")
     input_tab_Label1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "input_tab_win.html")))
-    input_tab_IDirLabel1 = ttk.Label(input_tab, text="VSCodeの起動")
+    input_tab_IDirLabel1 = ttk.Label(input_tab, text=lang_set["w_input_tab_IDirLabel1"])
     vscode_path = os.path.join(IDirEntry3.get(),"Code.exe --new-window")
-    # input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:sp.call(vscode_path))
-    input_tab_IDirButton1 = ttk.Button(input_tab, text="VSCode起動", command=lambda:run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var))
+    input_tab_IDirButton1 = ttk.Button(input_tab, text=lang_set["w_input_tab_IDirButton1"], command=lambda:run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var))
 
-    ### インプット作成タブパック
+    ### Input creation tab pack
     input_tab_Label1.grid(row=0,column=0,padx=10,pady=10)
 
     input_tab_workdir_label.grid(row=1,column=0,padx=10)
@@ -251,80 +258,84 @@ def main():
     input_tab_IDirLabel1.grid(row=3,column=0,padx=10)
     input_tab_IDirButton1.grid(row=3,column=2,padx=10)
 
-    ## カルクタブ
-    calcDocLabel1 = tk.Label(calc_tab,text="計算実行タブの操作について",
+    ## Calculation tab
+    calcDocLabel1 = tk.Label(calc_tab,text=lang_set["w_calcDocLabel1"],
                                fg="blue",cursor="hand1")
     calcDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "calc_tab_win.html")))
-    calc_tab_IFileLabel1 = ttk.Label(calc_tab, text="0000ファイルの指定")
+    calc_tab_IFileLabel1 = ttk.Label(calc_tab, text=lang_set["w_calc_tab_IFileLabel1"])
     calc_tab_entry1 = tk.StringVar()
     calc_tab_IFileEntry1 = ttk.Entry(calc_tab, textvariable=calc_tab_entry1, width=60)
     calc_tab_IFileEntry1.insert(0, settings["before_input_0000file"])
-    calc_tab_IFileButton1 = ttk.Button(calc_tab, text="参照", command=lambda:filedialog_clicked(calc_tab_IFileEntry1))
+    calc_tab_IFileButton1 = ttk.Button(calc_tab, text=lang_set["w_refer"], command=lambda:filedialog_clicked(calc_tab_IFileEntry1))
 
-    calc_tab_IFileLabel2 = ttk.Label(calc_tab, text="0001ファイルの指定")
+    calc_tab_IFileLabel2 = ttk.Label(calc_tab, text=lang_set["w_calc_tab_IFileLabel2"])
     calc_tab_entry2 = tk.StringVar()
     calc_tab_IFileEntry2 = ttk.Entry(calc_tab, textvariable=calc_tab_entry2, width=60)
     calc_tab_IFileEntry2.insert(0, settings["before_input_0001file"])
-    calc_tab_IFileButton2 = ttk.Button(calc_tab, text="参照", command=lambda:filedialog_clicked(calc_tab_IFileEntry2))
+    calc_tab_IFileButton2 = ttk.Button(calc_tab, text=lang_set["w_refer"], command=lambda:filedialog_clicked(calc_tab_IFileEntry2))
     
-    calc_tab_parallel_cpus_label = ttk.Label(calc_tab, text="並列CPU数")
+    calc_tab_parallel_cpus_label = ttk.Label(calc_tab, text=lang_set["w_calc_tab_parallel_cpus_label"])
     parallel_nums = [i + 1 for i in range(os.cpu_count())]
     calc_tab_parallel_cpus_value = ttk.Combobox(calc_tab, value=parallel_nums, width=5)    
     calc_tab_parallel_cpus_value.set(1)
 
-    calc_tab_precision_label = ttk.Label(calc_tab, text="精度選択")
-    precision_values = ["倍精度","単精度"]
+    calc_tab_precision_label = ttk.Label(calc_tab, text=lang_set["w_calc_tab_precision_label"])
+    precision_values = [lang_set["w_precision2"], lang_set["w_precision1"]]
     calc_tab_precision_value = ttk.Combobox(calc_tab, value=precision_values, width=10)
-    calc_tab_precision_value.set("倍精度")
+    calc_tab_precision_value.set(lang_set["w_precision2"])
 
-    calc_tab_stack_size_label = ttk.Label(calc_tab, text="スタックサイズ")
+    calc_tab_stack_size_label = ttk.Label(calc_tab, text=lang_set["w_calc_tab_stack_size_label"])
     calc_tab_stack_size = tk.StringVar()
     calc_tab_stack_size = ttk.Entry(calc_tab, textvariable=calc_tab_stack_size, width=10)
     calc_tab_stack_size.insert(0, "400m")
 
-    calc_tab_IFileLabel3 = ttk.Label(calc_tab, text="OpenRadiossの実行")
-    calc_tab_IFileButton3 = ttk.Button(calc_tab, text="計算実行", command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value,
-                                                                                         calc_tab_precision_value, calc_tab_stack_size))
+    calc_tab_IFileLabel3 = ttk.Label(calc_tab, text=lang_set["w_calc_tab_IFileLabel3"])
+    calc_tab_IFileButton3 = ttk.Button(calc_tab, text=lang_set["w_calc_tab_IFileButton3"], command=lambda:run_calc(IDirEntry1, calc_tab_IFileEntry1, calc_tab_IFileEntry2,calc_tab_parallel_cpus_value,
+    calc_tab_precision_value, calc_tab_stack_size,
+    lang_set))
 
-    ### パック
-    #### ドキュメントのリンク
+    ### pack
+    #### Document links
     calcDocLabel1.grid(row=0,column=0,padx=10,pady=10)
-    #### 0000ファイルの指定
+    #### Designation of 0000 files
     calc_tab_IFileLabel1.grid(row=1,column=0,padx=10)
     calc_tab_IFileEntry1.grid(row=1,column=1,padx=10)
     calc_tab_IFileEntry1.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0000file", calc_tab_IFileEntry1.get()))
     calc_tab_IFileButton1.grid(row=1,column=2,padx=10)
-    #### 0001ファイルの指定
+    #### 0001 File designation.
     calc_tab_IFileLabel2.grid(row=3,column=0,padx=10)
     calc_tab_IFileEntry2.grid(row=3,column=1,padx=10)
     calc_tab_IFileEntry2.bind("<Enter>",lambda event: dump_settings(settings, "before_input_0001file", calc_tab_IFileEntry2.get()))
     calc_tab_IFileButton2.grid(row=3,column=2,padx=10)
-    #### 並列計算
+    #### parallel computation
     calc_tab_parallel_cpus_label.grid(row=5,column=0,padx=10)
     calc_tab_parallel_cpus_value.grid(row=5,column=2,padx=10)
-    #### 計算精度
+    #### Calculation accuracy
     calc_tab_precision_label.grid(row=6,column=0,padx=10)
     calc_tab_precision_value.grid(row=6,column=2,padx=10)
-    #### スタックサイズ
+    #### stack size
     calc_tab_stack_size_label.grid(row=7,column=0,padx=10)
     calc_tab_stack_size.grid(row=7,column=2,padx=10)
-    #### 計算実行ボタン
+    #### Calculation execution button
     calc_tab_IFileLabel3.grid(row=8,column=0,padx=10)
     calc_tab_IFileButton3.grid(row=8,column=2,padx=10)
 
-    ## ポストタブの部品
-    postDocLabel1 = tk.Label(post_tab,text="結果処理タブの操作について",
+    ## Post-tab components
+    postDocLabel1 = tk.Label(post_tab,text=lang_set["w_postDocLabel1"],
                                fg="blue",cursor="hand1")
     postDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "post_tab_win.html")))
-    post_tab_IDirLabel2 = ttk.Label(post_tab, text="ParaViewの起動")
+    post_tab_IDirLabel2 = ttk.Label(post_tab, text=lang_set["w_post_tab_IDirLabel2"])
     paraview_path = os.path.join(IDirEntry4.get(),"bin","paraview.exe")
-    post_tab_IDirButton2 = ttk.Button(post_tab, text="ParaView起動", command=lambda:sp.call(paraview_path))
-    ### ポストタブの配置
+    post_tab_IDirButton2 = ttk.Button(post_tab, text=lang_set["w_post_tab_IDirButton2"], command=lambda:sp.call(paraview_path))
+    ### Post tab placement.
     postDocLabel1.grid(row=0,column=0,padx=10,pady=10)
     post_tab_IDirLabel2.grid(row=1,column=0,padx=10)
     post_tab_IDirButton2.grid(row=1,column=1,padx=10)
 
     root.mainloop()
 
+
 if __name__=="__main__":
-    main()
+    main(
+        set_langs = sys.argv[1]
+    )
