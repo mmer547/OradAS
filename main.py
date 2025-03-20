@@ -7,6 +7,7 @@ import json
 import shutil
 
 from install_tab import *
+from language import *
 
 def dirdialog_clicked(IDirEntry):
     
@@ -102,7 +103,9 @@ def dump_settings(settings, key, value):
         json.dump(settings, f)
 
 
-def main():
+def main(set_langs):
+    lang_set = choose_lang(set_langs)
+
     ## 全体の構成
     root = tk.Tk()
     root.title("OradAS")
@@ -122,12 +125,12 @@ def main():
     calc_tab = tk.Frame(nb, bg='white')
     post_tab = tk.Frame(nb, bg='white')
 
-    nb.add(install_tab, text="インストール", underline=0)
-    nb.add(pass_tab, text="パス入力")
-    nb.add(mesh_tab, text="メッシュ作成")
-    nb.add(input_tab, text="インプット作成")
-    nb.add(calc_tab, text="計算実行")
-    nb.add(post_tab, text="結果処理")
+    nb.add(install_tab, text=lang_set["w_install_tab_title"], underline=0)
+    nb.add(pass_tab, text=lang_set["w_pass_tab_title"])
+    nb.add(mesh_tab, text=lang_set["w_mesh_tab_title"])
+    nb.add(input_tab, text=lang_set["w_input_tab_title"])
+    nb.add(calc_tab, text=lang_set["w_calc_tab_title"])
+    nb.add(post_tab, text=lang_set["w_post_tab_title"])
 
     # パック
     nb.pack(expand=True, fill='both', padx=10, pady=10)
@@ -327,4 +330,6 @@ def main():
     root.mainloop()
 
 if __name__=="__main__":
-    main()
+    main(
+        set_langs = 'ja'
+    ))
