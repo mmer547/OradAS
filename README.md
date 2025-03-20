@@ -32,15 +32,17 @@ OradAS開発中の機能についてはissueをご覧ください。
 
 2024/12/29 : Version 2.0 release.VisualStudioCodeを起動時に作業フォルダを選択できるようにした。作業フォルダにサンプル0000ファイルと0001ファイルを作成するようにした。
 
+2025/03/20 : Version 2.1 release.GUIのキーワードを英語に変更した。起動を日本語と英語で選べるbatファイルを追加した。
+
 ## 起動要件
 
 Python (>=3.10)
 
 ## 使用方法
 
-次のコマンドで起動できます。
+日本語のGUIを立ち上げる場合は"run_Japanese.bat"を実行してください。
 
-`python main.py`
+英語のGUIを立ち上げる場合は"run_English.bat"を実行してください。
 
 使い方はGUI内にドキュメントとして埋め込んでいます。
 
@@ -98,15 +100,17 @@ For more information about features under development in OradAS, please see the 
 
 2024/12/29 : Version 2.0 release.Allows the user to select a working folder when starting VisualStudioCode.Sample 0000 and 0001 files are created in the working folder.
 
+2025/03/20 : Version 2.1 release.The keywords in the GUI were changed to English.Added bat file to select startup in English or Japanese.
+
 ## requirement
 
 Python (>=3.10)
 
 ## usage rules
 
-It can be started with the following command
+To launch the Japanese GUI, run "run_Japanese.bat".
 
-`python main.py`
+To launch the English GUI, run "run_English.bat".
 
 The usage is embedded as documentation in the GUI.
 
