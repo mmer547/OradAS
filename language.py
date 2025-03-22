@@ -37,7 +37,16 @@ def choose_lang(lang):
             "w_post_tab_IDirButton2" : "ParaView起動",
             'w_precision1' : '単精度',
             'w_precision2' : '倍精度',
-            'w_refer' : '参照'
+            'w_refer' : '参照',
+            'path_doc_calc_tab' : "calc_tab_win.html",
+            'path_doc_gmsh_install' : "gmsh_install_win.html",
+            'path_doc_input_tab' : "input_tab_win.html",
+            'path_doc_mesh_tab' : "mesh_tab_win.html",
+            'path_doc_openradioss_install' : "openradioss_install_win.html",
+            'path_doc_paraview_install' : "paraview_install_win.html",
+            'path_doc_path_setting' : "path_setting_win.html",
+            'path_doc_post_tab' : "post_tab_win.html",
+            'path_doc_vscode_install' : "vscode_install_win.html",
         }
         return lang_set
     elif lang == 'en':
@@ -63,7 +72,7 @@ def choose_lang(lang):
             "w_input_tab_Label1" : "About the operation of the input input tab(ja)",
             "w_input_tab_IDirLabel1" : "VSCode",
             "w_input_tab_IDirButton1" : "Launch",
-            "w_calc_tab_title" : "Solver",
+            "w_calc_tab_title" : "Calculation",
             "w_calcDocLabel1" : "About the operation of the Calculation Run tab(ja)",
             "w_calc_tab_IFileLabel1" : "Designation of 0000 files",
             "w_calc_tab_IFileLabel2" : "Designation of 0001 files",
@@ -78,6 +87,15 @@ def choose_lang(lang):
             "w_post_tab_IDirButton2" : "Launch",
             'w_precision1' : 'Single',
             'w_precision2' : 'Double',
-            'w_refer' : 'Browse'
+            'w_refer' : 'Browse',
+            'path_doc_calc_tab' : "calc_tab_win_en.html",
+            'path_doc_gmsh_install' : "gmsh_install_win_en.html",
+            'path_doc_input_tab' : "input_tab_win_en.html",
+            'path_doc_mesh_tab' : "mesh_tab_win_en.html",
+            'path_doc_openradioss_install' : "openradioss_install_win_en.html",
+            'path_doc_paraview_install' : "paraview_install_win_en.html",
+            'path_doc_path_setting' : "path_setting_win_en.html",
+            'path_doc_post_tab' : "post_tab_win_en.html",
+            'path_doc_vscode_install' : "vscode_install_win_en.html",
         }
         return lang_set
