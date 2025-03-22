@@ -61,12 +61,20 @@ def run_calc(IDirEntry1, file0000Path, file0001Path, parallel_nums,
         else:
             precision_flag = ""
         if int(parallel_nums.get())<=1:
-                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64"+precision_flag+".exe"), os.path.basename(file0000Path.get())))
-                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64"+precision_flag+".exe"), os.path.basename(file0001Path.get())))
+                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec",
+                                                                "starter_win64"+precision_flag+".exe"), 
+                                                                os.path.basename(file0000Path.get())))
+                f.write("call {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec",
+                                                                "engine_win64"+precision_flag+".exe"),
+                                                                os.path.basename(file0001Path.get())))
         else:
             f.write("call {0}\n".format('"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"'))
-            f.write("call {0} -i {1} -np {2}\n".format(os.path.join(IDirEntry1.get(), "exec", "starter_win64"+precision_flag+".exe"), os.path.basename(file0000Path.get()),parallel_nums.get()))
-            f.write("call mpiexec -delegate -n {2} {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", "engine_win64_impi"+precision_flag+".exe"), os.path.basename(file0001Path.get()),parallel_nums.get()))
+            f.write("call {0} -i {1} -np {2}\n".format(os.path.join(IDirEntry1.get(), "exec", 
+                                                                    "starter_win64"+precision_flag+".exe"), 
+                                                                    os.path.basename(file0000Path.get()),parallel_nums.get()))
+            f.write("call mpiexec -delegate -n {2} {0} -i {1}\n".format(os.path.join(IDirEntry1.get(), "exec", 
+                                                                                     "engine_win64_impi"+precision_flag+".exe"), 
+                                                                                     os.path.basename(file0001Path.get()),parallel_nums.get()))
         f.write("call convert.bat")
 
     file_name = os.path.splitext(os.path.basename(file0000Path.get()))[0]
@@ -153,18 +161,18 @@ def main(set_langs):
 
     ## Install tab
     install_tab_link1.pack(pady=10)
-    install_tab_link1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "openradioss_install_win.html")))
+    install_tab_link1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_openradioss_install"])))
     install_tab_link2.pack(pady=10)
-    install_tab_link2.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "gmsh_install_win.html")))
+    install_tab_link2.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_gmsh_install"])))
     install_tab_link3.pack(pady=10)
-    install_tab_link3.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "vscode_install_win.html")))
+    install_tab_link3.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_vscode_install"])))
     install_tab_link4.pack(pady=10)
-    install_tab_link4.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "paraview_install_win.html")))
+    install_tab_link4.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_paraview_install"])))
 
     ## path tabulation
     passDocLabel1 = tk.Label(pass_tab,text=lang_set["w_passDocLabel1"],
                                fg="blue",cursor="hand1")
-    passDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "path_setting_win.html")))
+    passDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_path_setting"])))
     
     IDirLabel1 = ttk.Label(pass_tab, text=lang_set["w_IDirLabel1"])
     entry1 = tk.StringVar()
@@ -216,7 +224,7 @@ def main(set_langs):
     ## mesh tab
     meshDocLabel1 = tk.Label(mesh_tab,text=lang_set["w_meshDocLabel1"],
                                fg="blue",cursor="hand1")
-    meshDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "mesh_tab_win.html")))
+    meshDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_mesh_tab"])))
     mesh_tab_IDirLabel1 = ttk.Label(mesh_tab, text=lang_set["w_mesh_tab_IDirLabel1"])
     gmsh_path = os.path.join(IDirEntry2.get(),"gmsh.exe")
     mesh_tab_IDirButton3 = ttk.Button(mesh_tab, text=lang_set["w_mesh_tab_IDirButton3"], command=lambda:sp.call(gmsh_path))
@@ -239,7 +247,7 @@ def main(set_langs):
 
     input_tab_Label1 = tk.Label(input_tab,text=lang_set["w_input_tab_Label1"],
                                fg="blue",cursor="hand1")
-    input_tab_Label1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "input_tab_win.html")))
+    input_tab_Label1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_input_tab"])))
     input_tab_IDirLabel1 = ttk.Label(input_tab, text=lang_set["w_input_tab_IDirLabel1"])
     vscode_path = os.path.join(IDirEntry3.get(),"Code.exe --new-window")
     input_tab_IDirButton1 = ttk.Button(input_tab, text=lang_set["w_input_tab_IDirButton1"], command=lambda:run_vscode(vscode_path, input_tab_workdir_entry, input_tab_load_sample_var))
@@ -261,7 +269,7 @@ def main(set_langs):
     ## Calculation tab
     calcDocLabel1 = tk.Label(calc_tab,text=lang_set["w_calcDocLabel1"],
                                fg="blue",cursor="hand1")
-    calcDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "calc_tab_win.html")))
+    calcDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_calc_tab"])))
     calc_tab_IFileLabel1 = ttk.Label(calc_tab, text=lang_set["w_calc_tab_IFileLabel1"])
     calc_tab_entry1 = tk.StringVar()
     calc_tab_IFileEntry1 = ttk.Entry(calc_tab, textvariable=calc_tab_entry1, width=60)
@@ -323,7 +331,7 @@ def main(set_langs):
     ## Post-tab components
     postDocLabel1 = tk.Label(post_tab,text=lang_set["w_postDocLabel1"],
                                fg="blue",cursor="hand1")
-    postDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", "post_tab_win.html")))
+    postDocLabel1.bind("<Button-1>",lambda e:link_click(os.path.join(os.path.dirname(__file__),"doc", lang_set["path_doc_post_tab"])))
     post_tab_IDirLabel2 = ttk.Label(post_tab, text=lang_set["w_post_tab_IDirLabel2"])
     paraview_path = os.path.join(IDirEntry4.get(),"bin","paraview.exe")
     post_tab_IDirButton2 = ttk.Button(post_tab, text=lang_set["w_post_tab_IDirButton2"], command=lambda:sp.call(paraview_path))
